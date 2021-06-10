@@ -21,8 +21,8 @@ git pull --all
 get add .
 get add [dir]
 get add --all
-get -am '提示信息'
-git p --all
+get commit -am '提示信息'
+git push --all
 git status
 ```
 
@@ -54,7 +54,6 @@ git fetch [remote]
  
 # 显示所有远程仓库
 git remote -v
-
  
 # 下载远程仓库的所有变动
 git fetch [remote]
