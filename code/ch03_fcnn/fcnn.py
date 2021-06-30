@@ -68,4 +68,4 @@ if __name__ == '__main__':
     print(loss_list[:10])
     print(loss_list[::100])
 
-    # torch.save(model,model)
+    # torch.save(model, model)
