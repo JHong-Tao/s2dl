@@ -20,10 +20,16 @@ from torch.autograd import Variable
 
 from PIL import Image
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-def data_loader(data_dir, batch=32, workers=0):
+def data_loader(data_dir, batch=32, workers=4, size =28):
     transform = transforms.Compose([
+        # transforms.ToTensor(),
+        # transforms.Normalize([0.5], [0.5])
+        transforms.Grayscale(1),
+        transforms.Resize(size),
+        transforms.CenterCrop((size, size)),  # 切割
         transforms.ToTensor(),
         transforms.Normalize([0.5], [0.5])
     ])
@@ -33,8 +39,8 @@ def data_loader(data_dir, batch=32, workers=0):
 
     # data_show(train_set)
 
-    train_data = DataLoader(train_set, batch_size=batch, shuffle=False, num_workers=workers)
-    test_set = DataLoader(test_set, batch_size=batch, shuffle=False, num_workers=workers)
+    train_data = DataLoader(train_set, batch_size=batch, shuffle=True, num_workers=workers)
+    test_set = DataLoader(test_set, batch_size=batch, shuffle=True, num_workers=workers)
     return train_data, test_set
 
 
@@ -158,6 +164,7 @@ def model_eval(net, test_data):
     eval_loss = 0
     eval_acc = 0
     net.eval()
+    loss_fn = nn.CrossEntropyLoss()
 
     data_size = len(test_data)
     for data, y in test_data:
@@ -166,7 +173,6 @@ def model_eval(net, test_data):
 
         y_hat = net(data).to(device)
 
-        loss_fn = nn.CrossEntropyLoss()
         loss = loss_fn(y_hat, y)
         eval_loss += loss
 
@@ -202,12 +208,22 @@ def net_predict(img, img_label, net, size=28):
 
 
 def read_img(path, size=28):
-    image = Image.open(path) #.convert('1') # 转换成灰度图
+    image = Image.open(path) .convert('L') # 转换成灰度图
+    image_arr = np.asarray(image)  # .astype(np.float32)
+    if np.sum(image_arr > 150) > image_arr.size / 2:
+        image_arr = np.where(image_arr<150, image_arr/2, image_arr)
+        image_arr = 255 -image_arr
+    image = Image.fromarray(image_arr)
+    plt.imshow(image, cmap='gray')
+    plt.show()
+    plt.close()
+
     transform = transforms.Compose([
+        transforms.Grayscale(1),
         transforms.Resize(size),
         transforms.CenterCrop((size, size)),  # 切割
         transforms.ToTensor(),
-        # transforms.Normalize([0.5], [0.5])
+        transforms.Normalize([0.5], [0.5])
     ])
     image = transform(image)
     image = image.view(image.size(0), -1)
@@ -216,9 +232,9 @@ def read_img(path, size=28):
 
 def init_param():
     x_dim = 28 * 28
-    w1 = 400
-    w2 = 200
-    w3 = 100
+    w1 = 384
+    w2 = 194
+    w3 = 96
     y_dim = 10
     lr = 1e-2
     epochs = 1
@@ -227,44 +243,31 @@ def init_param():
 
 if __name__ == '__main__':
     data_dir = '../ch00_dataset'
-    data = data_loader(data_dir, 128, 8)
-    data_show(data[0].dataset)
-    # params = init_param()
-    #
-    # iter_tuple = iterator_net(*params, data[0])
-    #
-    # train_process_show(iter_tuple[0], iter_tuple[1])
-    #
-    # model_eval(iter_tuple[2], data[1])
-    # y_hat = net_predict(img.cuda(), labels[0], iter_tuple[2])
+    path = '../ch00_dataset/0_9_img/hs_7.png'  # 黑底白字
 
-    dataiter = iter(data[0])
+    train_data, test_data = data_loader(data_dir, 128, 4)
+    data_show(train_data.dataset)
+    params = init_param()
 
-    images, labels = dataiter.next()
-    img = images[0].view(images[0].size(0),-1)
-    print(labels[0])
-    image = img.cpu().numpy().reshape(28, 28)
-    print(img)
-    print(type(image))
-    print(image.shape)
+    loss, acc, net = iterator_net(*params, train_data)
 
-    plt.imshow(image, cmap='gray')
-    import imageio
-    imageio.imsave('5.png', img.reshape(28, 28))
-    # plt.savefig('5.png')
-    plt.show()
-    plt.close()
+    train_process_show(loss, acc)
 
-    img1 = plt.imread('5.png')
+    model_eval(net, test_data)
 
-    print(img1)
+    data_iter = iter(train_data)
+    images, labels = data_iter.next()
+    img = images[0].view(images[0].size(0),-1)      # 1x784
+    show_img(img.cpu().numpy().reshape(28, 28))
 
+    y_hat = net_predict(img.cuda(), labels[0], net)
 
-    print(img1)
+    img1 = read_img(path)
 
+    y1_hat = net_predict(img1.cuda(), path, net)
 
-
-
+    # print(img)
+    # print(img1)
 
 
 
