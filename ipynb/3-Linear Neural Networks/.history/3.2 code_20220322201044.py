@@ -1,7 +1,7 @@
 '''
 Author:jhong.tao
 Date: 2022-03-21 10:30:23
-LastEditTime: 2022-03-22 20:35:44
+LastEditTime: 2022-03-22 20:10:44
 LastEditors: Please set LastEditors
 Description: 线性回归调用自动求导方法实现
 FilePath: \3-Linear Neural Networks\3.2 code.py
@@ -31,15 +31,16 @@ def systhetic_data(w, b, num_examples):
     Returns:
         tensor: X为样本的特征集，y为样本的标签
     """
-    # 生成线性回归的模你数据集，样本特征为len(w)，样本量为num_examples，从均值为0，方差为1的正态分布中采样
-    X = torch.normal(0., 1., (num_examples, len(w)))
+    # 生成线性回归的模你数据集，样本特征为len(w)，样本量为num_examples，从均值为0，标准差为1的正态分布中采样
+    X = torch.normal(10.0, 5., (num_examples, len(w)))
     y = torch.matmul(X, w) + b  # 生成不包含误差的y
-    y += torch.normal(0, 0.01, y.shape)  # 生成带有从均值为0，方差为0.01的有观察误差的样本标签
+    y += torch.normal(0, 0.01, y.shape)  # 生成带有从均值为0，标准差为0.01的有观察误差的样本标签
     return X, y
 
 
 # 设置真实的w和b
-true_w = torch.tensor([2, 3.4])
+# true_w = torch.tensor([2, 3.4])
+true_w = torch.linspace(1, 20, steps=2)
 true_b = 4.2
 
 num_examples = 1000  # 设置样本量num_examples=1000
@@ -87,7 +88,7 @@ def data_iter(batch_size, X, y):
 # 测试获取一个小批量的数据
 batch_size = 10
 batch_X, batch_y = next(data_iter(batch_size, X_features, y_labels))  # 获取一个小批量的数据，因为data_iter为生成器所以需要用next函数来取数据
-print(batch_X[0], "\t", batch_y[0])   # 打印第一行数据
+print(batch_X[0], "\n", batch_y[0])   # 打印第一行数据
 
 
 # 定义线性回归模型
@@ -139,12 +140,12 @@ def sgd(params:list, lr:float, batch_size:int):
 
 
 # 模型训练
-# 从均值为0，方差为0.01的正态分布中随机初始化参数w和b,由于我们的目标就是优化这两个参数，所以需要跟踪他们的梯度
+# 从均值为0，标准差为0.01的正态分布中随机初始化参数w和b,由于我们的目标就是优化这两个参数，所以需要跟踪他们的梯度
 w = torch.normal(0, 0.01, size=true_w.shape, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 # print("w:", w,"\nb:", b)  # 打印输出看一下随机初始化的w和b
 lr = 0.01
-epochs = 9
+epochs = 10
 net = linear
 loss = squared_loss
 loss_list = []
@@ -161,7 +162,6 @@ for epoch in range(epochs):
         loss_list.append(loss_epoch.detach().numpy())
 
 print(loss_list[0:3])
-print((true_w - w).mean())
 
 # 绘制损失函数优化过程
 viz.line(

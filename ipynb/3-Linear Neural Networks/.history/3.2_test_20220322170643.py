@@ -1,7 +1,7 @@
 '''
 Author: jhont.tao
 Date: 2022-03-21 21:16:52
-LastEditTime: 2022-03-22 17:13:48
+LastEditTime: 2022-03-22 17:06:12
 Description: 
 '''
 import numpy as np
@@ -31,7 +31,15 @@ viz = visdom.Visdom(env="scatter test")
  
 win = viz.scatter(
         X=np.random.rand(100, 2),
+        Y=np.random.rand(100, 2),
+        opts=dict(
+            legend=['Didnt', 'Update'],
+            xtickmin=-50,
+            xtickmax=50,
+            xtickstep=0.5,
+            ytickmin=-50,
+            ytickmax=50,
+            ytickstep=0.5,
+            markersymbol='cross-thin-open',
+        ),
     )
-
-
-print(np.random.rand(100, 2))

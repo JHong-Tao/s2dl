@@ -1,7 +1,7 @@
 '''
 Author:jhong.tao
 Date: 2022-03-21 10:30:23
-LastEditTime: 2022-03-22 20:35:44
+LastEditTime: 2022-03-22 20:33:57
 LastEditors: Please set LastEditors
 Description: 线性回归调用自动求导方法实现
 FilePath: \3-Linear Neural Networks\3.2 code.py
@@ -39,7 +39,8 @@ def systhetic_data(w, b, num_examples):
 
 
 # 设置真实的w和b
-true_w = torch.tensor([2, 3.4])
+# true_w = torch.tensor([2, 3.4])
+true_w = torch.normal(10, 4, (10, 1))
 true_b = 4.2
 
 num_examples = 1000  # 设置样本量num_examples=1000
@@ -144,7 +145,7 @@ w = torch.normal(0, 0.01, size=true_w.shape, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 # print("w:", w,"\nb:", b)  # 打印输出看一下随机初始化的w和b
 lr = 0.01
-epochs = 9
+epochs = 8
 net = linear
 loss = squared_loss
 loss_list = []

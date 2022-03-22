@@ -1,7 +1,7 @@
 '''
 Author: jhont.tao
 Date: 2022-03-21 21:16:52
-LastEditTime: 2022-03-22 17:13:48
+LastEditTime: 2022-03-22 17:03:45
 Description: 
 '''
 import numpy as np
@@ -30,8 +30,6 @@ import visdom
 viz = visdom.Visdom(env="scatter test")
  
 win = viz.scatter(
-        X=np.random.rand(100, 2),
-    )
-
-
-print(np.random.rand(100, 2))
+    X=np.random.rand(2),  # (255, 2), 值域0~1, 表示要展示的散点数据
+    Y=np.random.randint(1, 5),  # (255,), 值域1~4, 每一个数据的类别，将以其对应的colors中的颜色来显示
+)

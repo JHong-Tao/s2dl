@@ -39,7 +39,8 @@ def systhetic_data(w, b, num_examples):
 
 
 # 设置真实的w和b
-true_w = torch.tensor([2, 3.4])
+# true_w = torch.tensor([2, 3.4])
+true_w = torch.normal(0, 4, (10, 1))
 true_b = 4.2
 
 num_examples = 1000  # 设置样本量num_examples=1000
