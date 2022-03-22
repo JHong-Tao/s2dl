@@ -1,15 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-"""
-==================================================
-@Project -> File   ：study-ml -> 01_simple_linear_regression
-@IDE    ：PyCharm
-@Author ：jhong.tao
-@Date   ：2021/6/10 9:33
-@Desc   ：
-==================================================
-"""
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
 ==================================================
